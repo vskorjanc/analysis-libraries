@@ -1,0 +1,8 @@
+data/
+__pycache__/
+.ipynb_checkpoints/
+*.egg-info/
+build/
+dist/
+*.sublime*
+README.html
