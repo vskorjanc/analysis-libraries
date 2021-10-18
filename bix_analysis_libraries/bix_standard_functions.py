@@ -1,17 +1,9 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
 import math
 import pandas as pd
 import numpy as np
 
 
-# ## Pandas functions
-
-# In[ ]:
+# Pandas functions
 
 
 def add_level (df, value, name, axis = 0):
@@ -36,9 +28,7 @@ def add_levels (df, values, names, axis = 0):
     return df
 
 
-# ## NumPy functions
-
-# In[ ]:
+# NumPy functions
 
 
 def weighted_avg_and_std (values, weights):
@@ -54,9 +44,7 @@ def weighted_avg_and_std (values, weights):
     return (average, math.sqrt (variance))
 
 
-# ## MatPlotLib functions
-
-# In[ ]:
+# MatPlotLib functions
 
 
 def set_axlims (series, margin_factor = 0.1):
@@ -75,9 +63,6 @@ def set_axlims (series, margin_factor = 0.1):
     minlim = minv - border
 
     return minlim, maxlim
-
-
-# In[ ]:
 
 
 def unique_legend (ax):
