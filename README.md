@@ -1,6 +1,7 @@
 # Analysis Libraries
 
-> python -m pip install bix-analysis-libraries 
+> python -m pip install bix-analysis-libraries   
+
 An assortment of analysis libraries.
 
 ## Components
@@ -10,61 +11,55 @@ There are two components of the libraries divided by experiment type. Each compo
 
 To `import` the modules use the form
 ```python
-from bric_analysis_libraries[.<component>] import <module>
+from bix_analysis_libraries[.<component>] import <module>
 # or
-import bric_analysis_libraries[.<component>].<module>
+import bix_analysis_libraries[.<component>].<module>
 ```
 where `<component>` is the name of the component (if needed) and `<module>` is the name of the module. Any modules in the Standard Component do not require a component name, while modules in all other components do.
 
 **Examples**
 ```python
-from bric_analysis_libraries import standard_functions as std
+from bix_analysis_libraries import bix_standard_functions as bsf
 # or
-import bric_analysis_libraries.standard_functions as std
+import bix_analysis_libraries.bix_standard_functions as bsf
 ```
 
 ```python
-from bric_analysis_libraries.jv import aging_analysis as aging
+from bix_analysis_libraries.dark_bias import bix_dark_bias_data_prep as dbdp
 # or
-import bric_analysis_libraries.jv.aging_analysis as aging
+import bric_analysis_libraries.dark_bias.bix_dark_bias_data_prep as dbdp
 ```
 
 ---
 
 ### Standard Component
-> No component requried
+> No component requried   
+
 Contains standard functions.
 
-#### Standard Functions
+#### Bix Standard Functions
 Provides standard functions.
 
 ---
 
-### JV Component
-> Component name: `jv`  
-Contains data prep and analysis packages for JV experiments.
+### Dark Bias component
+> Component name: `dark_bias`  
 
-#### Aging Analysis
-> Module name: `aging_analysis`  
-Analysis of degradation mecahnisms
+Contains data prep for Dark Bias experiments.
 
-#### Aging Data Prep
-> Module name: `aging_data_prep`
-Data prep from the stability lab.
+#### Bix Dark Bias Data Prep
+> Module name: `bix_dark_bias_data_prep`  
 
-#### EC Lab Analysis
-> Module name: `ec_lab_analysis`
-Analysis of EC experiments
+Data prep for MPP tracking and JV data obtained using the [Easy Biologic](https://github.com/bicarlsen/easy-biologic "github.com/bicarlsen/easy-biologic") library.
 
-#### EC Lab Data Prep
-> Module name: `ec_lab_data_prep`
-Data prep of experiments form EC Lab.
+---
 
-#### Igor JV Data Prep
-> Module name: `igor_jv_data_prep`
-Data prep of JV experiments coming from the old IV setup.
+### Temperature Degradation component
+> Component name: `temperature_degradation`  
 
-#### JV Analysis
-> Module name: `jv_analysis`
-Analysis of JV experiments.
+Contains data prep for Temperature Degradation experiments.
 
+#### Temperature Degradation Data Prep
+> Module name: `temperature_degradation_data_prep`  
+
+Data prep for MPP tracking and JV data.
