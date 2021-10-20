@@ -9,12 +9,6 @@ import pandas as pd
 import numpy as np
 from itertools import groupby
 
-# custom imports
-from thot import ThotProject
-
-
-# In[ ]:
-
 
 def extract_temp (path):
     '''
