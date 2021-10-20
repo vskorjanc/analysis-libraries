@@ -6,3 +6,4 @@ build/
 dist/
 *.sublime*
 README.html
+README.md.backup

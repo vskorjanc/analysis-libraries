@@ -5,7 +5,7 @@
 An assortment of analysis libraries.
 
 ## Components
-There are two components of the libraries divided by experiment type. Each component has a data prep module to prepare the data from different software into a canonical form. The prepared data can then be analyzed with the analysis modules.
+There are two components of the libraries divided by experiment type. Each component has a data prep module to prepare the data from different software into a canonical form. The prepared data can then be analyzed with the analysis modules (to be added).
 
 **Use**
 
@@ -27,7 +27,7 @@ import bix_analysis_libraries.bix_standard_functions as bsf
 ```python
 from bix_analysis_libraries.dark_bias import bix_dark_bias_data_prep as dbdp
 # or
-import bric_analysis_libraries.dark_bias.bix_dark_bias_data_prep as dbdp
+import bix_analysis_libraries.dark_bias.bix_dark_bias_data_prep as dbdp
 ```
 
 ---
