@@ -5,7 +5,7 @@ with open( 'README.md', 'r' ) as f:
 
 setuptools.setup(
 	name='bix_analysis_libraries',
-	version = '0.0.2',
+	version = '0.0.3',
 	author='Viktor Skorjanc',
 	author_email = 'viktor.skorjanc@gmail.com',
 	description = 'An assortment of analysis libraries.',
@@ -19,8 +19,8 @@ setuptools.setup(
         "Operating System :: OS Independent",
 	],
 	install_requires = [
-		bric_analysis_libraries,
-		pandas,
-		numpy
+		'bric_analysis_libraries',
+		'pandas',
+		'numpy'
 	]
 )

@@ -178,7 +178,7 @@ def remove_odd_cycles (df):
     rdf = []
     cygb = df.groupby ('cycle')
     for cy, data in cygb:
-        if cy % 2 is 0:
+        if cy % 2 == 0:
             rdf.append (data)
     
     logging.info ('Odd cycles removed.')
@@ -279,7 +279,7 @@ def import_jv (path):
     Imports JV scan data.
     :param path: Path to the .csv file.
     :returns: A DataFrame indexed by channel and voltage.'''
-    df = pd.read_csv (jv.file, header = [0, 1])
+    df = pd.read_csv (path, header = [0, 1])
     df = df.stack (0)
     df.columns = ['current', 'power', 'voltage']
     df = df.set_index ('voltage', append = True)
