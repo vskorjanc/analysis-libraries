@@ -50,7 +50,7 @@ def get_date(db):
         except ValueError:
             raise ValueError(f'Wrong date format: {date}')
     else:
-        date = None
+        date = ''
     return date
 
 
