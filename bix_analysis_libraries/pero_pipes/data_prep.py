@@ -7,6 +7,13 @@ from .. import thot as bt
 
 
 def get_substrate_name(path):
+    '''
+    Takes file name and removes the part after the first dot.
+    Splits the string around an underscore, if there is an underscore,
+    the part after it is considered pixel name.
+    :param path: File path.
+    :returns: List with substrate name or substrate and pixel name.
+    '''
     file_name = os.path.basename(path)
     match = re.search(r'[^\.]*', file_name).group()
     match = match.split('_')
@@ -18,13 +25,26 @@ def get_substrate_name(path):
 
 
 def append_substrate_meta(path, df):
+    '''
+    Appends substrate metadata to columns.
+    :param path: File path.
+    :param df: Pandas DataFrame.
+    :returns: Pandas DataFrame with appended metadata.
+    '''
     match = get_substrate_name(path)
     df = bsf.add_levels(df, match, ['substrate', 'pixel'], axis=1)
     return df
 
 
-def get_date(thot):
-    container = thot.find_container()
+def get_date(db, search='{"_id":thot.root}'):
+    '''
+    Gets date from container metadata.
+    :param db: ThotProject instance.
+    :param search: Dictionary of container search criteria.
+    [Default: '{"_id":thot.root}']
+    :returns: Timestamp or None if not defined.
+    '''
+    container = db.find_container(search)
     if 'date' in container.metadata:
         date = container.metadata['date']
         try:
@@ -32,16 +52,25 @@ def get_date(thot):
         except ValueError:
             raise ValueError(f'Wrong date format: {date}')
     else:
-        date = ''
+        date = None
     return date
 
 
-def import_raw_data(thot, import_file):
-    assets = bt.find_raw_assets(thot)
-    date = get_date(thot)
+def import_raw_data(db, import_file, ra_type="", **kwargs):
+    '''
+    Imports raw data from a database.
+    :param db: ThotProject instance.
+    :param import_file: Function that takes file path and
+    outputs a pandas dataframe.
+    :param ra_type: Raw asset type. [Default: ""]
+    :param kwargs: Keyword arguments passed to import_file.
+    :returns: Pandas DataFrame.
+    '''
+    assets = bt.find_raw_assets(db, ra_type=ra_type)
+    date = get_date(db)
     dfs = []
     for asset in assets:
-        df = import_file(asset.file)
+        df = import_file(asset.file, **kwargs)
         df = bsf.add_level(df, date, 'date', axis=1)
         df = append_substrate_meta(asset.file, df)
         dfs.append(df)
