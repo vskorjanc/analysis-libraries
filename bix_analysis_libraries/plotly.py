@@ -1,6 +1,15 @@
 from plotly import graph_objects as go
 
 
+def export_plotly(fig, path):
+    '''
+    Exports html figure.
+    :param path: File path.
+    :param fig: Plotly figure instance.
+    '''
+    fig.write_html(path, include_plotlyjs='cdn')
+
+
 def multilayer_heatmap(df, layers, drop_pos=(0.37, 1.1)):
     '''
     Plots params as heatmap for data exploration.
