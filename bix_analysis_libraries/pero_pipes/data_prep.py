@@ -36,15 +36,13 @@ def append_substrate_meta(path, df):
     return df
 
 
-def get_date(db, search='{"_id":thot.root}'):
+def get_date(db):
     '''
     Gets date from container metadata.
     :param db: ThotProject instance.
-    :param search: Dictionary of container search criteria.
-    [Default: '{"_id":thot.root}']
     :returns: Timestamp or None if not defined.
     '''
-    container = db.find_container(search)
+    container = db.find_container({"_id": db.root})
     if 'date' in container.metadata:
         date = container.metadata['date']
         try:
@@ -56,17 +54,17 @@ def get_date(db, search='{"_id":thot.root}'):
     return date
 
 
-def import_raw_data(db, import_file, ra_type="", **kwargs):
+def import_raw_data(db, import_file, search={'type': ''}, **kwargs):
     '''
     Imports raw data from a database.
     :param db: ThotProject instance.
     :param import_file: Function that takes file path and
     outputs a pandas dataframe.
-    :param ra_type: Raw asset type. [Default: ""]
+    :param search: Raw asset search pattern. [Default: {'type': ''}]
     :param kwargs: Keyword arguments passed to import_file.
     :returns: Pandas DataFrame.
     '''
-    assets = bt.find_raw_assets(db, ra_type=ra_type)
+    assets = bt.find_assets(db, search)
     date = get_date(db)
     dfs = []
     for asset in assets:
