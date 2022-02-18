@@ -1,4 +1,5 @@
 import os.path
+from re import search
 
 
 def find_assets(db, search={'type': ''}):
@@ -32,3 +33,35 @@ def export_asset(file, db, export_function, item, a_type=None, **kwargs):
     }
     asset_path = db.add_asset(props, no_extension)
     export_function(item, asset_path, **kwargs)
+
+
+def make_global_asset(db, a_path, a_type):
+    search = {'type': a_type}
+    asset = db.find_asset(search)
+    if asset is None:
+        props = search.copy()
+        props['file'] = a_path
+        db.add_asset(props, a_type)
+        asset = db.find_asset(search)
+    return asset
+
+
+def import_global_asset(db, a_path, a_type, import_function, dev_path=None, **kwargs):
+    '''
+    :param db: ThotProject instance.
+    :param a_path: Asset path.
+    :param a_type: Asset type.
+    :param import_function: Function used to import the asset.
+    :param dev_path: Relative path from the script dir to the file. Used in dev mode.
+    If none, asset_path is used. [Default: None]
+    :param import_function: Function that takes file path as argument and imports it. 
+    :param kwargs: Keyword arguments passed to import_function.
+    :returns: Object returned by import_function.
+    '''
+    if dev_path and db.dev_mode():
+        path = os.environ['THOT_ORIGINAL_DIR']
+        file = os.path.join(path, dev_path)
+    else:
+        asset = make_global_asset(db, a_path, a_type)
+        file = asset.file
+    return import_function(file, **kwargs)
