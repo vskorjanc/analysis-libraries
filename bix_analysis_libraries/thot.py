@@ -1,5 +1,5 @@
 import os.path
-from re import search
+import pandas as pd
 
 
 def find_assets(db, search={'type': ''}):
@@ -35,7 +35,14 @@ def export_asset(file, db, export_function, item, a_type=None, **kwargs):
     export_function(item, asset_path, **kwargs)
 
 
-def make_global_asset(db, a_path, a_type):
+def make_global_asset(db, a_type, a_path):
+    '''
+    Makes a global asset if such asset does not exist already.
+    :param db: ThotProject instance.
+    :param a_type: Asset type.
+    :param a_path: Asset path.
+    :returns: Asset instance.
+    '''
     search = {'type': a_type}
     asset = db.find_asset(search)
     if asset is None:
@@ -46,15 +53,24 @@ def make_global_asset(db, a_path, a_type):
     return asset
 
 
-def import_global_asset(db, a_path, a_type, import_function, dev_path=None, **kwargs):
+def import_global_asset(
+    db,
+    a_type,
+    a_path,
+    dev_path=None,
+    import_function=pd.read_pickle,
+    **kwargs
+):
     '''
+    Creates a global asset if it doesn't exist and imports it.
     :param db: ThotProject instance.
-    :param a_path: Asset path.
     :param a_type: Asset type.
+    :param a_path: Asset path.
     :param import_function: Function used to import the asset.
     :param dev_path: Relative path from the script dir to the file. Used in dev mode.
-    If none, asset_path is used. [Default: None]
+    If None, asset_path is used. [Default: None]
     :param import_function: Function that takes file path as argument and imports it. 
+    [Default: pd.read_pickle]
     :param kwargs: Keyword arguments passed to import_function.
     :returns: Object returned by import_function.
     '''
@@ -62,6 +78,6 @@ def import_global_asset(db, a_path, a_type, import_function, dev_path=None, **kw
         path = os.environ['THOT_ORIGINAL_DIR']
         file = os.path.join(path, dev_path)
     else:
-        asset = make_global_asset(db, a_path, a_type)
+        asset = make_global_asset(db, a_type, a_path)
         file = asset.file
     return import_function(file, **kwargs)
