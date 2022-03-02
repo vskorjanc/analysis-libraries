@@ -96,8 +96,8 @@ def import_formatted_data(db, search, import_file=pd.read_pickle, axis=0, **kwar
         search = [search]
 
     assets = []
-    for a_t in search:
-        found = bt.find_assets(db, search={'type': a_t}, exit=False)
+    for s in search:
+        found = bt.find_assets(db, search=s, exit=False)
         assets += found
 
     if assets == []:
