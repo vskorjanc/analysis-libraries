@@ -1,15 +1,21 @@
 import os.path
+import sys
 import pandas as pd
 
 
-def find_assets(db, search={'type': ''}):
+def find_assets(db, search={'type': ''}, exit=True):
     '''
     Finds raw assets within a thot container.
     :param db: A ThotProject instance.
-    :param ra_type: Asset search pattern. [Default: {'type': ''}]
+    :param search: Asset search pattern. [Default: {'type': ''}]
+    :param exit: Wheter to end the script when no assets are found. 
+    [Default: True]
     :returns: List of matched assets.
     '''
-    return db.find_assets(search)
+    assets = db.find_assets(search)
+    if assets == [] and exit:
+        sys.exit()
+    return assets
 
 
 def export_asset(file, db, export_function, item, a_type=None, **kwargs):
@@ -66,7 +72,6 @@ def import_global_asset(
     :param db: ThotProject instance.
     :param a_type: Asset type.
     :param a_path: Asset path.
-    :param import_function: Function used to import the asset.
     :param dev_path: Relative path from the script dir to the file. Used in dev mode.
     If None, asset_path is used. [Default: None]
     :param import_function: Function that takes file path as argument and imports it. 
