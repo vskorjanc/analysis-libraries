@@ -60,7 +60,15 @@ def get_date(db):
     return date
 
 
-def import_raw_data(db, import_file, search={'type': ''}, has_pixel=True, **kwargs):
+def import_raw_data(
+    db,
+    import_file,
+    search={'type': ''},
+    has_pixel=True,
+    rename_axis=True,
+    sort_columns=True,
+    **kwargs
+):
     '''
     Imports raw data from a database.
     :param db: ThotProject instance.
@@ -69,22 +77,27 @@ def import_raw_data(db, import_file, search={'type': ''}, has_pixel=True, **kwar
     :param search: Raw asset search pattern. [Default: {'type': ''}]
     :param has_pixel: Whether pixel name should also be 
     appended. [Default: True]
+    :param rename_axis: Whether to rename column levels. [Default: True]
+    :param sort_columns: Whether to sort column index. [Default: True]
     :param kwargs: Keyword arguments passed to import_file.
     :returns: Pandas DataFrame.
     '''
     assets = bt.find_assets(db, search)
     date = get_date(db)
+    files = [asset.file for asset in assets]
+    files = sorted(files)
     dfs = []
-    for asset in assets:
-        df = import_file(asset.file, **kwargs)
+    for file in files:
+        df = import_file(file, **kwargs)
         df = bsf.add_level(df, date, 'date', axis=1)
-        df = append_substrate_meta(asset.file, df, has_pixel=has_pixel)
+        df = append_substrate_meta(file, df, has_pixel=has_pixel)
         dfs.append(df)
     df = pd.concat(dfs, axis=1)
-    df = df.sort_index(axis=1)
-    if has_pixel:
+    if sort_columns:
+        df = df.sort_index(axis=1)
+    if rename_axis and has_pixel:
         df = df.rename_axis(columns=['substrate', 'pixel', 'date', 'param'])
-    else:
+    elif rename_axis:
         df = df.rename_axis(columns=['substrate', 'date', 'param'])
     return df
 
