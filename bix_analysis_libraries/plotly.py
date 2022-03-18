@@ -1,4 +1,6 @@
+import pandas as pd
 from plotly import graph_objects as go
+from plotly import express as px
 
 
 def export_plotly(fig, path):
@@ -8,6 +10,78 @@ def export_plotly(fig, path):
     :param fig: Plotly figure instance.
     '''
     fig.write_html(path, include_plotlyjs='cdn')
+
+
+def scatter_4D_plot(
+    df: pd.DataFrame,
+    xyz: tuple[str, str, str],
+    color: str,
+) -> go.Figure:
+    """Makes a 4D scatter plot (3 spatial + color) with buttons for watching different planes.
+
+    :param df: DataFrame columns as 4 dimensions that are plotted. Columns should not be MultiIndex.
+    :param xyz: Tuple of x, y and z axis column names.
+    :param color: Color axis name.
+    :return: Plotly figure.
+    """
+    x, y, z = xyz
+    fig = px.scatter_3d(
+        df,
+        x=x,
+        y=y,
+        z=z,
+        # size='area',
+        color=color
+    )
+    fig.update_traces(
+        marker=dict(size=3),
+        selector=dict(mode='markers')
+    )
+
+    def make_button(eye, label, x_pos):
+        button = dict(
+            buttons=list([
+                dict(
+                    args=[{
+                        "scene.camera.eye": eye,
+                        "scene.camera.up": {'x': 0, 'y': 1, 'z': 0},
+                    }],
+                    label=label,
+                    method="relayout"
+                ),
+            ]),
+            type='buttons',
+            pad={"r": 10, "t": 10},
+            showactive=True,
+            x=x_pos,
+            xanchor="right",
+            y=1.1,
+            yanchor="top"
+        )
+        return button
+
+    def make_buttons(x, y, z):
+        xy = make_button(
+            {'x': 0, 'y': 0, 'z': 2},
+            f'{x}-{y}',
+            x_pos=0.6
+        )
+        zx = make_button(
+            {'x': 0, 'y': 2, 'z': 0},
+            f'{z}-{x}',
+            x_pos=0.8
+        )
+        zy = make_button(
+            {'x': 2, 'y': 0, 'z': 0},
+            f'{z}-{y}',
+            x_pos=1
+        )
+        return [xy, zx, zy]
+
+    fig.update_layout(
+        updatemenus=make_buttons(x, y, z)
+    )
+    return fig
 
 
 def heatmap_3D_plot(df, xaxis='x', params=None):
@@ -113,6 +187,8 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
     )
     fig.update_layout(
         margin=dict(t=100, b=0, l=0, r=0),
-        scene_camera=camera
+        scene_camera=camera,
+        xaxis_title=xaxis,
+        yaxis_title=df.index.name
     )
     return (fig)
