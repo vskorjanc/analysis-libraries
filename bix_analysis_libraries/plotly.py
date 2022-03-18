@@ -19,7 +19,7 @@ def scatter_4D_plot(
 ) -> go.Figure:
     """Makes a 4D scatter plot (3 spatial + color) with buttons for watching different planes.
 
-    :param df: DataFrame columns as 4 dimensions that are plotted. Columns should not be MultiIndex.
+    :param df: DataFrame with columns as 4 dimensions that are plotted. Columns should not be MultiIndex.
     :param xyz: Tuple of x, y and z axis column names.
     :param color: Color axis name.
     :return: Plotly figure.
