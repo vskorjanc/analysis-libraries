@@ -192,3 +192,62 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
         yaxis_title=df.index.name
     )
     return (fig)
+
+def multilayer_plot(
+    df: pd.DataFrame, 
+    plot_single: go.Figure, 
+    params=None
+    ):
+    '''
+    Takes 
+    :param df: Pandas DataFrame with columns as layers.
+    :plot single: Function that returns object passed to Plotly's fig.add_trace() function.
+    Takes one column of the dataframe (layer) and `visible` as arguments. 
+    :param params: List of params from Columns to plot. 
+    If None, plots all the Params. [Default: None]
+    :returns: plotly.graph_objects.Figure instance.
+    '''
+    if params is None:
+        params = df.columns
+
+
+    fig = go.Figure()
+
+    def add_trace(fig, data, visible=True):
+        fig.add_trace(plot_single(data, visible=visible))
+
+    lpr = len(params)
+    bl = []
+    for (nr, param) in enumerate(params):
+        if nr == 0:
+            add_trace(fig, df[param])
+        else:
+            add_trace(fig, df[param], visible=False)
+        tfl = lpr * [False]
+        tfl[nr] = True
+        bl.append(
+            dict(
+                args=[{'visible': tfl}],
+                label=param,
+                method='update'
+            )
+        )
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                buttons=bl,
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.1,
+                xanchor="left",
+                y=1.1,
+                yanchor="top"
+            ),
+        ]
+    )
+    # fig.update_layout(
+    #     xaxis_title=xaxis,
+    #     yaxis_title=df.index.name
+    # )
+    return (fig)
