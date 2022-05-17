@@ -193,11 +193,12 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
     )
     return (fig)
 
+
 def multilayer_plot(
-    df: pd.DataFrame, 
-    plot_single: go.Figure, 
+    df: pd.DataFrame,
+    plot_single: go.Figure,
     params=None
-    ):
+):
     '''
     Takes 
     :param df: Pandas DataFrame with columns as layers.
@@ -210,24 +211,25 @@ def multilayer_plot(
     if params is None:
         params = df.columns
 
-
     fig = go.Figure()
 
     def add_trace(fig, data, visible=True):
-        fig.add_trace(plot_single(data, visible=visible))
+        fig.add_traces(plot_single(data, visible=visible))
 
-    lpr = len(params)
+    param_len = len(params)
     bl = []
     for (nr, param) in enumerate(params):
         if nr == 0:
             add_trace(fig, df[param])
+            trace_len = len(fig.data)
         else:
             add_trace(fig, df[param], visible=False)
-        tfl = lpr * [False]
-        tfl[nr] = True
+        is_visible = param_len * trace_len * [False]
+        for i in range(trace_len):
+            is_visible[nr * trace_len + i] = True
         bl.append(
             dict(
-                args=[{'visible': tfl}],
+                args=[{'visible': is_visible}],
                 label=param,
                 method='update'
             )
