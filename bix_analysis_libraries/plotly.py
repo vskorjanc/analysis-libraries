@@ -197,15 +197,17 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
 def multilayer_plot(
     df: pd.DataFrame,
     plot_single: go.Figure,
-    params=None
+    params=None,
+    **kwargs
 ):
     '''
     Takes 
     :param df: Pandas DataFrame with columns as layers.
-    :plot single: Function that returns object passed to Plotly's fig.add_trace() function.
+    :param plot_single: Function that returns object passed to Plotly's fig.add_trace() function.
     Takes one column of the dataframe (layer) and `visible` as arguments. 
     :param params: List of params from Columns to plot. 
     If None, plots all the Params. [Default: None]
+    :param kwargs: Keyword arguments passed to plot_single function.
     :returns: plotly.graph_objects.Figure instance.
     '''
     if params is None:
@@ -214,7 +216,7 @@ def multilayer_plot(
     fig = go.Figure()
 
     def add_trace(fig, data, visible=True):
-        fig.add_traces(plot_single(data, visible=visible))
+        fig.add_traces(plot_single(data, visible=visible, **kwargs))
 
     param_len = len(params)
     bl = []
