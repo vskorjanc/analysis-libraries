@@ -4,11 +4,10 @@ import pandas as pd
 from thot import ThotProject
 
 
-
 def init_thot(
-    script_path: str, 
-    dev_roots:str='../../dev_roots.csv'
-    ):
+    script_path: str,
+    dev_roots: str = '../../dev_roots.csv'
+):
     '''
     Infers the `dev_root` from the list on dev_roots, and initializes `ThotProject`.
     :param script_path: Path to the script that runs (use __file__).
@@ -18,14 +17,15 @@ def init_thot(
     def get_dev_root(script_name, dev_roots):
         df = pd.read_csv(dev_roots, sep='\t', header=0, index_col=0)
         return df.loc[script_name, 'dev_root']
-    
+
     if 'THOT_ORIGINAL_DIR' in os.environ:
         original_dir = os.environ['THOT_ORIGINAL_DIR']
         os.chdir(original_dir)
 
     script_name = os.path.basename(script_path)
-    dev_root = get_dev_root (script_name, dev_roots)
+    dev_root = get_dev_root(script_name, dev_roots)
     return ThotProject(dev_root=dev_root)
+
 
 def find_assets(db, search={'type': ''}, exit=True):
     '''
