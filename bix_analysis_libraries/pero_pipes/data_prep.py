@@ -65,6 +65,7 @@ def import_raw_data(
     import_file,
     search={'type': ''},
     has_pixel=True,
+    has_date=True,
     rename_axis=True,
     sort_columns=True,
     **kwargs
@@ -75,30 +76,31 @@ def import_raw_data(
     :param import_file: Function that takes file path and
     outputs a pandas dataframe.
     :param search: Raw asset search pattern. [Default: {'type': ''}]
-    :param has_pixel: Whether pixel name should also be 
+    :param has_pixel: Whether pixel name should be 
     appended. [Default: True]
+    :param has_date: Whether date should be appended. [Default: True]
     :param rename_axis: Whether to rename column levels. [Default: True]
     :param sort_columns: Whether to sort column index. [Default: True]
     :param kwargs: Keyword arguments passed to import_file.
     :returns: Pandas DataFrame.
     '''
     assets = bt.find_assets(db, search)
-    date = get_date(db)
+    if has_date:
+        date = get_date(db)
     files = [asset.file for asset in assets]
     files = sorted(files)
     dfs = []
     for file in files:
         df = import_file(file, **kwargs)
-        df = bsf.add_level(df, date, 'date', axis=1)
+        if has_date:
+            df = bsf.add_level(df, date, 'date', axis=1)
         df = append_substrate_meta(file, df, has_pixel=has_pixel)
         dfs.append(df)
     df = pd.concat(dfs, axis=1)
     if sort_columns:
         df = df.sort_index(axis=1)
-    if rename_axis and has_pixel:
-        df = df.rename_axis(columns=['substrate', 'pixel', 'date', 'param'])
-    elif rename_axis:
-        df = df.rename_axis(columns=['substrate', 'date', 'param'])
+    if rename_axis:
+        df.columns = df.columns.set_names('param', level=-1)
     return df
 
 
