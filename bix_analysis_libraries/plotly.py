@@ -3,13 +3,14 @@ from plotly import graph_objects as go
 from plotly import express as px
 
 
-def export_plotly(fig, path):
+def export_plotly(fig, path, **kwargs):
     '''
     Exports html figure.
     :param path: File path.
     :param fig: Plotly figure instance.
+    :param kwargs: Keyword arguments passed to fig.write_html.
     '''
-    fig.write_html(path, include_plotlyjs='cdn')
+    fig.write_html(path, include_plotlyjs='cdn', **kwargs)
 
 
 def scatter_4D_plot(
