@@ -23,7 +23,10 @@ def init_thot(
         os.chdir(original_dir)
 
     script_name = os.path.basename(script_path)
-    dev_root = get_dev_root(script_name, dev_roots)
+    try:
+        dev_root = get_dev_root(script_name, dev_roots)
+    except FileNotFoundError:
+        dev_root = None
     return ThotProject(dev_root=dev_root)
 
 
