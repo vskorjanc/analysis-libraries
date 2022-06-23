@@ -78,6 +78,15 @@ def add_levels(df, values, names, axis=0):
     return df
 
 
+def export_pickle(df, path, **kwargs):
+    '''
+    Exports pickle.
+    :param df: Pandas DataFrame.
+    :param path: Path for new file.
+    :param kwargs: Keyword arguments passed to `pd.to_pickle` function.
+    '''
+    pd.to_pickle(df, path, **kwargs)
+
 # NumPy functions
 
 
