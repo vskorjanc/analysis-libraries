@@ -40,6 +40,49 @@ Contains standard functions.
 #### Bix Standard Functions
 Provides standard functions.
 
+----
+
+### Pero Pipes component
+> Component name: `pero_pipes`  
+
+#### Data Prep
+> Module name: `data_prep`
+General data prep used in the Pero Pipes project.
+
+--
+
+### PL component
+> Component name: `pl`  
+
+#### PL Data Prep
+> Module name: `pl_data_prep`
+Calibrating PL data.
+
+#### PL Analysis
+> Module name: `pl_analysis`  
+
+HETF analysis of PL spectra.
+
+---
+
+### EQE component
+> Component name: `eqe`  
+
+#### EQE Analysis
+> Module name: `eqe_analysis`  
+
+EQE data analysis.
+
+---
+
+### EQE component
+> Component name: `eqe`  
+
+#### EQE Analysis
+> Module name: `eqe_analysis`  
+
+EQE data analysis.
+
 ---
 
 ### Dark Bias component
