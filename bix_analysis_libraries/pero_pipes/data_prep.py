@@ -7,16 +7,16 @@ from .. import bix_standard_functions as bsf
 from .. import thot as bt
 
 
-def get_substrate_name(path):
+def get_substrate_name(path, pattern=r'[^\.]*'):
     '''
-    Takes file name and removes the part after the first dot.
-    Splits the string around an underscore, if there is an underscore,
+    Looks for substrate and pixel name. Splits the string around an underscore, if there is an underscore,
     the part after it is considered pixel name.
     :param path: File path.
+    :param search: Search pattern for the part with the substrate and pixel name. [Default: r'[^\.]*']
     :returns: List with substrate name or substrate and pixel name.
     '''
     file_name = os.path.basename(path)
-    match = re.search(r'[^\.]*', file_name).group()
+    match = re.search(pattern, file_name).group()
     match = match.split('_')
     if len(match) == 1:
         match.append('')
@@ -25,16 +25,17 @@ def get_substrate_name(path):
     return match
 
 
-def append_substrate_meta(path, df, has_pixel=True):
+def append_substrate_meta(path, df, has_pixel=True, **kwargs):
     '''
     Appends substrate metadata to columns.
     :param path: File path.
     :param df: Pandas DataFrame.
     :param has_pixel: Whether pixel name should also be 
     appended. [Default: True]
+    :param kwargs: Keyword arguments passed to get_substrate_name.
     :returns: Pandas DataFrame with appended metadata.
     '''
-    match = get_substrate_name(path)
+    match = get_substrate_name(path, **kwargs)
     if has_pixel:
         df = bsf.add_levels(df, match, ['substrate', 'pixel'], axis=1)
     else:
@@ -64,10 +65,10 @@ def import_raw_data(
     db,
     import_file,
     search={'type': ''},
-    has_pixel=True,
     has_date=True,
     rename_axis=True,
     sort_columns=True,
+    i_file_kwargs={},
     **kwargs
 ):
     '''
@@ -81,7 +82,8 @@ def import_raw_data(
     :param has_date: Whether date should be appended. [Default: True]
     :param rename_axis: Whether to rename column levels. [Default: True]
     :param sort_columns: Whether to sort column index. [Default: True]
-    :param kwargs: Keyword arguments passed to import_file.
+    :param i_file_kwargs: Dictionary of keyword arguments passed to import_file. [Default: {}]
+    :param kwargs: Keyword arguments passed to append_substrate_meta.
     :returns: Pandas DataFrame.
     '''
     assets = bt.find_assets(db, search)
@@ -91,10 +93,10 @@ def import_raw_data(
     files = sorted(files)
     dfs = []
     for file in files:
-        df = import_file(file, **kwargs)
+        df = import_file(file, **i_file_kwargs)
         if has_date:
             df = bsf.add_level(df, date, 'date', axis=1)
-        df = append_substrate_meta(file, df, has_pixel=has_pixel)
+        df = append_substrate_meta(file, df, **kwargs)
         dfs.append(df)
     df = pd.concat(dfs, axis=1)
     if sort_columns:
