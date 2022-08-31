@@ -18,25 +18,21 @@ def get_substrate_name(path, pattern=r'[^\.]*'):
     file_name = os.path.basename(path)
     match = re.search(pattern, file_name).group()
     match = match.split('_')
-    if len(match) == 1:
-        match.append('')
-    elif len(match) > 2:
+    if len(match) > 2:
         raise ValueError(f'Wrong file name: {file_name}')
     return match
 
 
-def append_substrate_meta(path, df, has_pixel=True, **kwargs):
+def append_substrate_meta(path, df, **kwargs):
     '''
     Appends substrate metadata to columns.
     :param path: File path.
     :param df: Pandas DataFrame.
-    :param has_pixel: Whether pixel name should also be 
-    appended. [Default: True]
     :param kwargs: Keyword arguments passed to get_substrate_name.
     :returns: Pandas DataFrame with appended metadata.
     '''
     match = get_substrate_name(path, **kwargs)
-    if has_pixel:
+    if len(match) == 2:
         df = bsf.add_levels(df, match, ['substrate', 'pixel'], axis=1)
     else:
         df = bsf.add_level(df, match[0], 'substrate', axis=1)
@@ -77,8 +73,6 @@ def import_raw_data(
     :param import_file: Function that takes file path and
     outputs a pandas dataframe.
     :param search: Raw asset search pattern. [Default: {'type': ''}]
-    :param has_pixel: Whether pixel name should be 
-    appended. [Default: True]
     :param has_date: Whether date should be appended. [Default: True]
     :param rename_axis: Whether to rename column levels. [Default: True]
     :param sort_columns: Whether to sort column index. [Default: True]
