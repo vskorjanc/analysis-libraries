@@ -1,6 +1,9 @@
 import pandas as pd
 from plotly import graph_objects as go
-from plotly import express as px
+from plotly import (
+    express as px,
+    io as pio
+)
 
 
 def export_plotly(fig, path, **kwargs):
@@ -10,7 +13,13 @@ def export_plotly(fig, path, **kwargs):
     :param fig: Plotly figure instance.
     :param kwargs: Keyword arguments passed to fig.write_html.
     '''
-    fig.write_html(path, include_plotlyjs='cdn', **kwargs)
+    config = {
+        'toImageButtonOptions': {
+            'format': 'svg',  # one of png, svg, jpeg, webp
+        },
+        'displaylogo': False
+    }
+    fig.write_html(path, config=config, include_plotlyjs='cdn', **kwargs)
 
 
 def scatter_4D_plot(
@@ -261,3 +270,133 @@ def multilayer_plot(
         ]
     )
     return (fig)
+
+# set the template
+
+
+pio.templates['bix'] = go.layout.Template(
+    layout={
+        'annotationdefaults': {'arrowhead': 0, 'arrowwidth': 1},
+        'autotypenumbers': 'strict',
+        'coloraxis': {'colorbar': {'outlinewidth': 0, 'tickcolor': 'rgb(36,36,36)', 'ticks': 'outside'}},
+        'colorscale': {'diverging': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'],
+                                     [0.2, 'rgb(214,96,77)'], [0.3,
+                                                               'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'],
+                                     [0.5, 'rgb(247,247,247)'], [0.6,
+                                                                 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'],
+                                     [0.8, 'rgb(67,147,195)'], [0.9,
+                                                                'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']],
+                       'sequential': 'Magma',
+                       'sequentialminus': 'Sunsetdark'},
+        'colorway': ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52'],
+        # 'toImageButtonOptions': {
+        # 'format': 'svg',  # one of png, svg, jpeg, webp
+        # 'filename': 'custom_image',
+        # 'scale': 1  # Multiply title/legend/axis/canvas sizes by this factor
+        # },
+        'font': {'color': 'rgb(0,0,0)',
+                 'family': 'Helvetica,Futura,Calibri,Times New Roman',
+                 'size': 18},
+        'geo': {'bgcolor': 'white',
+                'lakecolor': 'white',
+                'landcolor': 'white',
+                'showlakes': True,
+                'showland': True,
+                'subunitcolor': 'white'},
+        'hoverlabel': {'align': 'left'},
+        'hovermode': 'closest',
+        'legend': {
+            'bgcolor': 'rgba(255,255,255,0.7)',
+            'xanchor': 'left',
+            'yanchor': 'top',
+            'x': 0.01,
+            'y': 0.99
+        },
+        'mapbox': {'style': 'light'},
+        'paper_bgcolor': 'white',
+        'plot_bgcolor': 'white',
+        'polar': {'angularaxis': {'gridcolor': 'rgb(232,232,232)',
+                                  'linecolor': 'rgb(36,36,36)',
+                                  'showgrid': False,
+                                  'showline': True,
+                                  'ticks': 'outside'},
+                  'bgcolor': 'white',
+                  'radialaxis': {'gridcolor': 'rgb(232,232,232)',
+                                 'linecolor': 'rgb(36,36,36)',
+                                 'showgrid': False,
+                                 'showline': True,
+                                 'ticks': 'outside'}},
+        'scene': {'xaxis': {'backgroundcolor': 'white',
+                            'gridcolor': 'rgb(232,232,232)',
+                            'gridwidth': 2,
+                            'linecolor': 'rgb(36,36,36)',
+                            'showbackground': True,
+                            'showgrid': False,
+                            'showline': True,
+                            'ticks': 'outside',
+                            'zeroline': False,
+                            'zerolinecolor': 'rgb(36,36,36)'},
+                  'yaxis': {'backgroundcolor': 'white',
+                            'gridcolor': 'rgb(232,232,232)',
+                            'gridwidth': 2,
+                            'linecolor': 'rgb(36,36,36)',
+                            'showbackground': True,
+                            'showgrid': False,
+                            'showline': True,
+                            'ticks': 'outside',
+                            'zeroline': False,
+                            'zerolinecolor': 'rgb(36,36,36)'},
+                  'zaxis': {'backgroundcolor': 'white',
+                            'gridcolor': 'rgb(232,232,232)',
+                            'gridwidth': 2,
+                            'linecolor': 'rgb(36,36,36)',
+                            'showbackground': True,
+                            'showgrid': False,
+                            'showline': True,
+                            'ticks': 'outside',
+                            'zeroline': False,
+                            'zerolinecolor': 'rgb(36,36,36)'}},
+        'shapedefaults': {'fillcolor': 'black', 'line': {'width': 0}, 'opacity': 0.3},
+        'ternary': {'aaxis': {'gridcolor': 'rgb(232,232,232)',
+                              'linecolor': 'rgb(36,36,36)',
+                              'showgrid': False,
+                              'showline': True,
+                              'ticks': 'outside'},
+                    'baxis': {'gridcolor': 'rgb(232,232,232)',
+                              'linecolor': 'rgb(36,36,36)',
+                              'showgrid': False,
+                              'showline': True,
+                              'ticks': 'outside'},
+                    'bgcolor': 'white',
+                    'caxis': {'gridcolor': 'rgb(232,232,232)',
+                              'linecolor': 'rgb(36,36,36)',
+                              'showgrid': False,
+                              'showline': True,
+                              'ticks': 'outside'}},
+        'title': {'x': 0.5,
+                  'y': 0.9,
+                  'xanchor': 'center',
+                  'yanchor': 'top'},
+        'xaxis': {'automargin': True,
+                  'gridcolor': 'rgb(232,232,232)',
+                  'linecolor': 'rgb(36,36,36)',
+                  'showgrid': True,
+                  'showline': True,
+                  'ticks': 'outside',
+                  'title': {'standoff': 15},
+                  'zeroline': True,
+                  'zerolinecolor': 'rgb(170,170,170)',
+                  'mirror': True},
+        'yaxis': {'automargin': True,
+                  'gridcolor': 'rgb(232,232,232)',
+                  'linecolor': 'rgb(36,36,36)',
+                  'showgrid': True,
+                  'showline': True,
+                  'ticks': 'outside',
+                  'title': {'standoff': 15},
+                  'zeroline': True,
+                  'zerolinecolor': 'rgb(170,170,170)',
+                  'mirror': True}
+    })
+
+pio.templates.default = "bix"
