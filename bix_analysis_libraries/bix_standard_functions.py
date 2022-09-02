@@ -77,7 +77,8 @@ def add_levels(df, values, names, axis=0):
         df = add_level(df, value, name, axis=axis)
     return df
 
-def flatten_column_index (df, linker='_'):
+
+def flatten_column_index(df, linker='_'):
     '''
     Flattens multi to a single index in df.
     :param df: Pandas DataFrame.
@@ -85,7 +86,9 @@ def flatten_column_index (df, linker='_'):
     :returns: Pandas DataFrame with a single column index.
     '''
     df = df.copy()
-    df.columns = [linker.join(col) for col in df.columns.values]
+    columns = df.columns.values
+    if df.columns.nlevels > 1:
+        df.columns = [linker.join(col) for col in df.columns.values]
     return df
 
 
