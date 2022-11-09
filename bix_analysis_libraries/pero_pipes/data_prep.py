@@ -121,3 +121,15 @@ def import_formatted_data(db, search, import_file=pd.read_pickle, axis=0, **kwar
     for asset in assets:
         df.append(import_file(asset.file, **kwargs))
     return pd.concat(df, axis=axis)
+
+
+def pickle_w_markdown(df, name, db, **kwargs):
+    asset_path = bt.export_asset(
+        file=f'{name}.pkl',
+        db=db,
+        export_function=bsf.export_pickle,
+        item=df,
+        **kwargs
+    )
+    markdown_path = bsf.change_extension(asset_path, 'md')
+    df.to_markdown(markdown_path, floatfmt=".2E")

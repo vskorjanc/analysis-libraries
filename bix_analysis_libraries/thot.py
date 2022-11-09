@@ -66,6 +66,7 @@ def export_asset(file, db, export_function, item, a_type=None, **kwargs):
     }
     asset_path = db.add_asset(props, no_extension)
     export_function(item, asset_path, **kwargs)
+    return asset_path
 
 
 def make_global_asset(db, a_type, a_path):
