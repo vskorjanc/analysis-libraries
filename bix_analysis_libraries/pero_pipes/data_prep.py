@@ -102,6 +102,13 @@ def import_raw_data(
 
 def import_formatted_data(db, search, import_file=pd.read_pickle, axis=0, **kwargs):
     '''
+    :param db: ThotProject instance.
+    :param search: Asset search pattern.
+    :param import_file: Function that takes file path and
+    outputs a pandas dataframe. [Default: pd.read_pickle]
+    :param axis: Axis along which to concatenate the imported dataframes. [Default: 0]
+    :param kwargs: Keyword arguments passed to import_file function.
+    :returns: Pandas DataFrame.
     '''
     if not isinstance(search, list):
         search = [search]
@@ -123,7 +130,15 @@ def import_formatted_data(db, search, import_file=pd.read_pickle, axis=0, **kwar
     return pd.concat(df, axis=axis)
 
 
-def pickle_w_markdown(df, name, db, **kwargs):
+def pickle_w_markdown(df, name, db, floatfmt=".2E", **kwargs):
+    '''
+    Function that exports an .md together with a .pkl file. Intended for showing exported metrics in Obsidian.
+    :param df: DataFrame to export.
+    :param name: File name without extension.
+    :param db: ThotProject instance.    
+    :param floatfmt: Format in which to render numbers. [Default: ".2E"]
+    :param kwargs: KeyWord arguments passed to bt.export_asset.
+    '''
     asset_path = bt.export_asset(
         file=f'{name}.pkl',
         db=db,
@@ -132,4 +147,4 @@ def pickle_w_markdown(df, name, db, **kwargs):
         **kwargs
     )
     markdown_path = bsf.change_extension(asset_path, 'md')
-    df.to_markdown(markdown_path, floatfmt=".2E")
+    df.to_markdown(markdown_path, floatfmt=floatfmt)

@@ -54,7 +54,8 @@ def export_asset(file, db, export_function, item, a_type=None, **kwargs):
     :param item: Item to export.
     :param a_type: Asset type. If `None`, obtained by removing file extension.
     [Default: None]  
-    param kwargs: Keyword arguments passed to export_function. 
+    :param kwargs: Keyword arguments passed to export_function. 
+    :returns: Asset path.
     '''
     no_extension, _ = os.path.splitext(file)
     if a_type is None:
