@@ -28,6 +28,7 @@ setuptools.setup(
         'scipy',
         'plotly',
         'thot-data',
-        'thot-cli'
+        'thot-cli',
+        'tabulate'
     ]
 )

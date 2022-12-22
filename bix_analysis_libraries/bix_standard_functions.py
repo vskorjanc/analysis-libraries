@@ -67,8 +67,8 @@ def add_levels(df, values, names, axis=0):
     '''
     Adds levels with a single value to the index of a DataFrame.
     :param df: DataFrame to append the level to.
-    :param names: List of names of levels to add.
     :param values: List of values for each level.
+    :param names: List of names of levels to add.
     :param axis: The axis to add the level to. [Default: 0]
     :returns: DataFrame with appended levels.  
     '''
