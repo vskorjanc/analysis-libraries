@@ -123,37 +123,37 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
         )
 
     lpr = len(params)
-    if lpr == 1:
-        add_trace(fig, df)
-    else:
-        bl = []
-        for (nr, param) in enumerate(params):
-            if nr == 0:
-                add_trace(fig, df[param])
-            else:
-                add_trace(fig, df[param], visible=False)
-            tfl = lpr * [False]
-            tfl[nr] = True
-            bl.append(
-                dict(
-                    args=[{'visible': tfl}],
-                    label=param,
-                    method='update'
-                )
+    # if lpr == 1:
+    # #     add_trace(fig, df)
+    # else:
+    bl = []
+    for (nr, param) in enumerate(params):
+        if nr == 0:
+            add_trace(fig, df[param])
+        else:
+            add_trace(fig, df[param], visible=False)
+        tfl = lpr * [False]
+        tfl[nr] = True
+        bl.append(
+            dict(
+                args=[{'visible': tfl}],
+                label=param,
+                method='update'
             )
-        fig.update_layout(
-            updatemenus=[
-                dict(
-                    buttons=bl,
-                    direction="down",
-                    pad={"r": 10, "t": 10},
-                    showactive=True,
-                    x=0.1,
-                    xanchor="left",
-                    y=1.1,
-                    yanchor="top"
-                )
-            ])
+        )
+    # fig.update_layout(
+    #     updatemenus=[
+    #          dict(
+    #             buttons=bl,
+    #             direction="down",
+    #             pad={"r": 10, "t": 10},
+    #             showactive=True,
+    #             x=0.1,
+    #             xanchor="left",
+    #             y=1.1,
+    #             yanchor="top"
+    #         ),
+    #     ])
 
     fig.update_layout(
         updatemenus=[
@@ -176,6 +176,16 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
                 pad={"r": 10, "t": 10},
                 showactive=True,
                 x=0.37,
+                xanchor="left",
+                y=1.1,
+                yanchor="top"
+            ),
+            dict(
+                buttons=bl,
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=0.1,
                 xanchor="left",
                 y=1.1,
                 yanchor="top"
