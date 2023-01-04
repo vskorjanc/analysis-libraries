@@ -118,7 +118,8 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
                 x=data.columns.get_level_values(0).tolist(),
                 y=data.index.values.tolist(),
                 z=data,
-                visible=visible
+                visible=visible,
+                colorscale='Inferno'
             )
         )
 
@@ -216,6 +217,7 @@ def heatmap_3D_plot(df, xaxis='x', params=None):
     )
     fig.update_layout(
         margin=dict(t=100, b=0, l=0, r=0),
+
         scene_camera=camera,
         xaxis_title=xaxis,
         yaxis_title=df.index.name
@@ -289,15 +291,9 @@ pio.templates['bix'] = go.layout.Template(
         'annotationdefaults': {'arrowhead': 0, 'arrowwidth': 1},
         'autotypenumbers': 'strict',
         'coloraxis': {'colorbar': {'outlinewidth': 0, 'tickcolor': 'rgb(36,36,36)', 'ticks': 'outside'}},
-        'colorscale': {'diverging': [[0.0, 'rgb(103,0,31)'], [0.1, 'rgb(178,24,43)'],
-                                     [0.2, 'rgb(214,96,77)'], [0.3,
-                                                               'rgb(244,165,130)'], [0.4, 'rgb(253,219,199)'],
-                                     [0.5, 'rgb(247,247,247)'], [0.6,
-                                                                 'rgb(209,229,240)'], [0.7, 'rgb(146,197,222)'],
-                                     [0.8, 'rgb(67,147,195)'], [0.9,
-                                                                'rgb(33,102,172)'], [1.0, 'rgb(5,48,97)']],
-                       'sequential': 'Magma',
-                       'sequentialminus': 'Sunsetdark'},
+        'colorscale': {'diverging': 'balance',
+                       'sequential': 'bluered',
+                       'sequentialminus': 'bluered'},
         'colorway': ['#636EFA', '#EF553B', '#00CC96', '#AB63FA', '#FFA15A', '#19D3F3', '#FF6692', '#B6E880', '#FF97FF', '#FECB52'],
         # 'toImageButtonOptions': {
         # 'format': 'svg',  # one of png, svg, jpeg, webp
