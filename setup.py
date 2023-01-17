@@ -21,14 +21,14 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     install_requires=[
-        'bric_analysis_libraries',
-        'pandas',
-        'numpy',
-        'matplotlib',
-        'scipy',
-        'plotly',
-        'thot-data',
-        'thot-cli',
-        'tabulate'
+        'bric_analysis_libraries==0.0.12',
+        'pandas==1.4.1',
+        'numpy==1.21.2',
+        'matplotlib==3.4.3',
+        'scipy==1.7.1',
+        'plotly==5.11.0',
+        'thot-data==0.6.3',
+        'thot-cli==0.5.1',
+        'tabulate==0.9.0'
     ]
 )
