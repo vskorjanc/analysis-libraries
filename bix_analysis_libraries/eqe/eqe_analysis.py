@@ -3,6 +3,9 @@ import numpy as np
 import scipy.constants as phys
 from bric_analysis_libraries import standard_functions as std
 
+import numpy as np
+from scipy.integrate import simpson
+
 
 def calc_voc_rad(ratio):
     q = phys.e
@@ -64,3 +67,18 @@ def fit_urbach_tail(data, fit_window, filter_window):
         return data
 
     return (calc_urbach_tail(data, e_u, b), fit)
+
+
+def calc_Jsc(df, am_df):
+    '''
+    Calculates Jsc by multiplying the EQE spectrum with AM1.5 spectrum and integrating. Returns values in mA cm-2.
+    :param df: EQE spectra, indexed by energy (eV).
+    :param am_df: Pandas dataframe which contains AM1.5 spectrum labeled as 'AM1.5G/(photons s-1 m-2 eV-1)'
+    :returns: Pandas series which contains Jsc values.
+    '''
+    [jsc_df, am_ri] = std.common_reindex([df, am_df], fillna=np.nan)
+    jsc_df = jsc_df.apply(
+        lambda x: x * am_ri['AM1.5G/(photons s-1 m-2 eV-1)']).dropna(how='all')
+    jsc_df = jsc_df.fillna(0)
+    jsc = jsc_df.apply(lambda x: simpson(x, x.index)) * phys.e
+    return jsc / 10
