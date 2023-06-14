@@ -125,7 +125,11 @@ def heatmap_3D_plot(df, xaxis="x", params=None):
     # else:
     bl = []
     for nr, param in enumerate(params):
-        if nr == 0:
+        if len(params) == 1:
+            add_trace(fig, df)
+        elif nr == 0:
+            print(f"param: {param}")
+            print(df[param])
             add_trace(fig, df[param])
         else:
             add_trace(fig, df[param], visible=False)
