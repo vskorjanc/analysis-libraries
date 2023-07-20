@@ -25,10 +25,11 @@ setuptools.setup(
         'pandas==1.4.1',
         'numpy==1.21.2',
         'matplotlib==3.4.3',
-        'scipy==1.7.1',
+        'scipy==1.7.2',
         'plotly==5.11.0',
         'thot-data==0.6.3',
         'thot-cli==0.5.1',
-        'tabulate==0.9.0'
+        'tabulate==0.9.0',
+        'BaselineRemoval==0.1.1'
     ]
 )
