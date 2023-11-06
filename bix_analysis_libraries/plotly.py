@@ -283,7 +283,7 @@ pio.templates["bix"] = go.layout.Template(
         },
         "colorscale": {
             "diverging": "balance",
-            "sequential": "bluered",
+            "sequential": "inferno",
             "sequentialminus": "bluered",
         },
         "colorway": [
