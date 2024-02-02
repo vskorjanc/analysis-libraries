@@ -19,8 +19,9 @@ def get_substrate_name(path, pattern=r"(.*?)_?([a-f]?)\..*"):
     match = re.search(pattern, file_name).groups()
     if len(match) > 2 or len(match) == 0:
         raise ValueError(f"Wrong file name: {file_name}")
-    if match[1] == "":
-        match = [match[0]]
+    if len(match) == 2:
+        if match[1] == "":
+            match = [match[0]]
     return match
 
 
