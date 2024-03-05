@@ -66,6 +66,7 @@ def import_raw_data(
     has_date=True,
     rename_axis=True,
     sort_columns=True,
+    extension=None,
     i_file_kwargs={},
     **kwargs,
 ):
@@ -78,6 +79,7 @@ def import_raw_data(
     :param has_date: Whether date should be appended. [Default: True]
     :param rename_axis: Whether to rename column levels. [Default: True]
     :param sort_columns: Whether to sort column index. [Default: True]
+    :param extension: Filter for files with the extension. [Default: None]
     :param i_file_kwargs: Dictionary of keyword arguments passed to import_file. [Default: {}]
     :param kwargs: Keyword arguments passed to append_substrate_meta.
     :returns: Pandas DataFrame.
@@ -86,6 +88,10 @@ def import_raw_data(
     if has_date:
         date = get_date(db)
     files = [asset.file for asset in assets]
+    if extension:
+        if extension[0] != ".":
+            extension = f".{extension}"
+        files = [file for file in files if extension in file]
     files = sorted(files)
     dfs = []
     for file in files:
