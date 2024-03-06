@@ -3,9 +3,12 @@ import pandas as pd
 
 
 def subtract_background(df):
-    sub_df = pd.DataFrame(index=df.index, columns=df.columns)
+    sub_dfs = {}
     for column in df:
-        baseObj = BaselineRemoval(df[column].dropna())
+        df_wo_na = df[column].dropna()
+        baseObj = BaselineRemoval(df_wo_na)
         subtracted = baseObj.ZhangFit()
-        sub_df[column] = subtracted
-    return sub_df
+        sub_df = pd.Series(subtracted, index=df_wo_na.index)
+        sub_dfs[column] = sub_df
+    sub_dfs = pd.concat(sub_dfs, axis=1, names=df.columns.names)
+    return sub_dfs
