@@ -1,6 +1,6 @@
 import setuptools
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 with open("README.md", "r") as f:
     long_desc = f.read()
@@ -24,9 +24,9 @@ setuptools.setup(
         "bric_analysis_libraries==0.0.12",
         "pandas>=2.2.1",
         "numpy>=1.26.4",
-        "matplotlib>=3.4.3",
+        "matplotlib>=3.8.3",
         "scipy>=1.12.0",
-        "plotly==5.11.0",
+        "plotly==5.19.0",
         "thot-data==0.6.3",
         "thot-cli==0.5.1",
         "tabulate>=0.9.0",
