@@ -134,6 +134,8 @@ def interpolate(df, step, kind="linear"):
     or ‘next’. See scipy.interpolate.interp1d for more detail. [default: 'linear']
     :returns: Expanded and interpolated DataFrame
     """
+    if type(df) == pd.Series:
+        df = pd.DataFrame(df)
     df = df.sort_index()
     x = df.index
     xnew = np.arange(x.min(), x.max(), step)
