@@ -1,9 +1,45 @@
 import pandas as pd
+from . import bix_standard_functions as bsf
 from plotly import graph_objects as go
 from plotly import express as px, io as pio
+import os.path
 
 
-def export_plotly(fig, path, **kwargs):
+def update_fig(fig, fig_props):
+    def update_trace(t):
+        name = t.name
+        if "_" in name:
+            name = name.split("_")[0]
+        t.update(
+            name=fig_props.loc[name, "group"],
+            line_color=fig_props.loc[name, "color"],
+            legendrank=fig_props.loc[name, "legendrank"] + 1,
+        )
+
+    fig.for_each_trace(update_trace)
+
+
+def export_plotly(
+    fig,
+    path,
+    rename=False,
+    fig_props_path="../JV/fig_props/fig_props.pkl",
+    add_svg=False,
+    svg_dimensions=[600, 500],
+    **kwargs,
+):
+    if rename and os.path.isfile(fig_props_path):
+        fig_props = pd.read_pickle(fig_props_path)
+        update_fig(fig, fig_props)
+    export_html(fig=fig, path=path, **kwargs)
+    if not add_svg:
+        return
+    path = bsf.change_extension(path, "svg")
+    fig.update_layout(width=svg_dimensions[0], height=svg_dimensions[1])
+    fig.write_image(path)
+
+
+def export_html(fig, path, **kwargs):
     """
     Exports html figure.
     :param path: File path.
@@ -413,11 +449,11 @@ pio.templates["bix"] = go.layout.Template(
             "automargin": True,
             "gridcolor": "rgb(232,232,232)",
             "linecolor": "rgb(36,36,36)",
-            "showgrid": True,
+            "showgrid": False,
             "showline": True,
             "ticks": "outside",
             "title": {"standoff": 15},
-            "zeroline": True,
+            "zeroline": False,
             "zerolinecolor": "rgb(170,170,170)",
             "mirror": True,
         },
@@ -425,11 +461,11 @@ pio.templates["bix"] = go.layout.Template(
             "automargin": True,
             "gridcolor": "rgb(232,232,232)",
             "linecolor": "rgb(36,36,36)",
-            "showgrid": True,
+            "showgrid": False,
             "showline": True,
             "ticks": "outside",
             "title": {"standoff": 15},
-            "zeroline": True,
+            "zeroline": False,
             "zerolinecolor": "rgb(170,170,170)",
             "mirror": True,
         },
