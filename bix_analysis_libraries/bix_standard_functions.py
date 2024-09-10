@@ -79,6 +79,18 @@ def add_levels(df, values, names, axis=0):
     return df
 
 
+def reorder_columns(df, column_order):
+    reordered_df = df.copy()
+    reordered_df = reordered_df.T
+    order = [column_order.index(column) for column in reordered_df.index.values]
+    reordered_df["order"] = order
+    reordered_df = reordered_df.set_index("order", append=True)
+    reordered_df = reordered_df.sort_index(level="order")
+    reordered_df = reordered_df.droplevel("order")
+    reordered_df = reordered_df.T
+    return reordered_df
+
+
 def flatten_column_index(df, linker="_"):
     """
     Flattens multi to a single index in df.
