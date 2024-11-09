@@ -67,6 +67,58 @@ def give_next_color(color_count):
     return (color, color_count)
 
 
+def add_log_button(
+    fig: go.Figure, primary_log: bool = True, x: float = 0.11, y: float = 1.1
+):
+    """
+    Adds a button that switches between linear and log mode for y axis (or both y and y2 axes if present).
+    :param fig: Plotly figure.
+    :param primary_log: Whether figure uses log view as primary. [Default: True]
+    :param x: x position of the button. [Default: 0.11]
+    :param y: y position of the button. [Default: 1.1]
+    """
+    order = ["log", "linear"] if primary_log else ["linear", "log"]
+
+    # Check if the figure has a secondary y-axis
+    has_secondary_y = "yaxis2" in fig.layout
+
+    # Set args based on the presence of secondary y-axis
+    if has_secondary_y:
+        args_log = {"yaxis.type": order[0], "yaxis2.type": order[0]}
+        args_linear = {"yaxis.type": order[1], "yaxis2.type": order[1]}
+    else:
+        args_log = {"yaxis.type": order[0]}
+        args_linear = {"yaxis.type": order[1]}
+
+    # Update layout to add buttons for switching scales
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                type="buttons",
+                direction="left",
+                buttons=[
+                    dict(
+                        args=[args_log],
+                        label=order[0],
+                        method="relayout",
+                    ),
+                    dict(
+                        args=[args_linear],
+                        label=order[1],
+                        method="relayout",
+                    ),
+                ],
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=x,
+                xanchor="left",
+                y=y,
+                yanchor="top",
+            ),
+        ]
+    )
+
+
 def scatter_4D_plot(
     df: pd.DataFrame,
     xyz: tuple[str, str, str],
