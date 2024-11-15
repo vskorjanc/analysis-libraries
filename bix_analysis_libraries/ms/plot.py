@@ -10,7 +10,7 @@ def plot_ms(
             visible = True if column == df.columns[0] else "legendonly"
         secondary_y = True if column[0] == "SEM" else False
         legend = legend2 if secondary_y else legend1
-        data = df[column].values.T[0]
+        data = df[column].values
         fig.add_trace(
             go.Scatter(
                 x=df.index.values,
@@ -18,6 +18,7 @@ def plot_ms(
                 name=column[1],
                 legend=legend,
                 visible=visible,
+                mode="lines+markers",
             ),
             secondary_y=secondary_y,
             row=row,
