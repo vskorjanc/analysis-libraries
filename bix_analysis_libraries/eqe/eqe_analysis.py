@@ -1,7 +1,10 @@
 import numpy as np
 import scipy.constants as phys
+from scipy.optimize import curve_fit
 from bric_analysis_libraries import standard_functions as std
+from bix_analysis_libraries import bix_standard_functions as bsf
 
+import pandas as pd
 import numpy as np
 from scipy.integrate import simpson
 
@@ -87,3 +90,65 @@ def calc_Jsc(df, am_df):
     jsc_df = jsc_df.fillna(0)
     jsc = jsc_df.apply(lambda x: simpson(x, x.index)) * phys.e
     return jsc / 10
+
+
+def sigmoid_function(x, amplitude, midpoint, steepness):
+    return amplitude / (1 + np.exp(-2.63 * (x - midpoint) / steepness))
+
+
+def fit_sigmoid(series, area_width):
+    series = series.dropna()
+    interpol_series = bsf.interpolate(series, 0.001, "cubic")
+    # take inflection point as the midpoint guess
+    midpoint_guess = (
+        bsf.apply_savgol(interpol_series, window_length=200, deriv=1).idxmax().values[0]
+    )
+
+    amplitude_guess = series.max()
+    if amplitude_guess > 1:
+        amplitude_guess = 1
+    steepness_guess = 0.04
+
+    selected = series.loc[midpoint_guess - area_width : midpoint_guess + area_width]
+
+    x_data = selected.index.values
+    y_data = selected.values
+
+    p0 = [amplitude_guess, midpoint_guess, steepness_guess]
+
+    popt, _ = curve_fit(
+        sigmoid_function, x_data, y_data, p0=p0, bounds=([0, 1.5, 0], [1, 2.2, 0.1])
+    )
+    return popt, midpoint_guess
+
+
+def apply_sigmoid_fit(df):
+    fit = pd.DataFrame(
+        index=pd.Index(["amplitude", "midpoint", "steepness"]), columns=df.columns
+    )
+    sigmoid_tail_df = df.copy()
+    sigmoid_df = pd.DataFrame(
+        index=np.arange(df.index.min(), df.index.max(), 0.001), columns=df.columns
+    )
+    area_width = 0.1
+    for column in df.columns:
+        popt, midpoint_guess = fit_sigmoid(df[column], area_width)
+        fit[column] = popt
+        # set the values below the inflection point to the fit values for J0 calculation
+        sigmoid_tail_df.loc[: popt[1], column] = [
+            sigmoid_function(x, *popt)
+            for x in sigmoid_tail_df.loc[: popt[1]].index.values
+        ]
+        sigmoid_df.loc[
+            midpoint_guess - area_width : midpoint_guess + area_width, column
+        ] = [
+            sigmoid_function(x, *popt)
+            for x in sigmoid_df.loc[
+                midpoint_guess - area_width : midpoint_guess + area_width
+            ].index.values
+        ]
+
+    sigmoid_tail_df = bsf.interpolate(sigmoid_tail_df, 0.001, "cubic")
+    metrics = pd.DataFrame(fit.T[["midpoint", "steepness"]])
+    metrics = metrics.rename({"midpoint": "bandgap/eV"}, axis=1)
+    return sigmoid_df, sigmoid_tail_df, metrics
