@@ -25,18 +25,23 @@ def export_plotly(
     rename=False,
     fig_props_path="../JV/fig_props/fig_props.pkl",
     add_svg=False,
-    svg_dimensions=[600, 500],
+    add_png=False,
+    dimensions=[600, 500],
     **kwargs,
 ):
     if rename and os.path.isfile(fig_props_path):
         fig_props = pd.read_pickle(fig_props_path)
         update_fig(fig, fig_props)
     export_html(fig=fig, path=path, **kwargs)
-    if not add_svg:
+    if not (add_png or add_png):
         return
-    path = bsf.change_extension(path, "svg")
-    fig.update_layout(width=svg_dimensions[0], height=svg_dimensions[1])
-    fig.write_image(path)
+    fig.update_layout(width=dimensions[0], height=dimensions[1])
+    if add_svg:
+        path = bsf.change_extension(path, "svg")
+        fig.write_image(path)
+    if add_png:
+        path = bsf.change_extension(path, "png")
+        fig.write_image(path)
 
 
 def export_html(fig, path, **kwargs):
@@ -307,6 +312,73 @@ def heatmap_3D_plot(df, xaxis="x", params=None):
     return fig
 
 
+def add_multilayer_plot(
+    fig: go.Figure,
+    df: pd.DataFrame,
+    plot_single,
+    params=None,
+    row=1,
+    col=1,
+    button_x=0.1,
+    button_y=1.1,
+    **kwargs,
+):
+    """_summary_
+
+    :param fig: _description_
+    :param df: _description_
+    :param plot_single: _description_
+    :param params: _description_, defaults to None
+    :param row: _description_, defaults to 1
+    :param col: _description_, defaults to 1
+    :param button_x: _description_, defaults to 0.1
+    :param button_y: _description_, defaults to 1.1
+    """
+
+    if params is None:
+        params = df.columns
+
+    # get the visibility of traces already on the figure
+    append_is_visible = []
+    for trace in fig.data:
+        append_is_visible.append(trace.visible)
+
+    def add_trace(fig, data, row, col, visible=True):
+        traces = plot_single(data, visible=visible, **kwargs)
+        if (row == 1) and (col == 1):
+            fig.add_traces(traces)
+        else:
+            fig.add_traces(traces, rows=row, cols=col)
+        return len(traces)
+
+    param_len = len(params)
+    bl = []
+    for nr, param in enumerate(params):
+        if nr == 0:
+            trace_len = add_trace(fig, df[param], row, col)
+        else:
+            add_trace(fig, df[param], row, col, visible=False)
+        is_visible = param_len * trace_len * [False]
+        for i in range(trace_len):
+            is_visible[nr * trace_len + i] = True
+        is_visible = append_is_visible + is_visible
+        bl.append(dict(args=[{"visible": is_visible}], label=param, method="update"))
+    fig.update_layout(
+        updatemenus=[
+            dict(
+                buttons=bl,
+                direction="down",
+                pad={"r": 10, "t": 10},
+                showactive=True,
+                x=button_x,
+                xanchor="left",
+                y=button_y,
+                yanchor="top",
+            ),
+        ]
+    )
+
+
 def multilayer_plot(df: pd.DataFrame, plot_single: go.Figure, params=None, **kwargs):
     """
     Takes
@@ -318,41 +390,49 @@ def multilayer_plot(df: pd.DataFrame, plot_single: go.Figure, params=None, **kwa
     :param kwargs: Keyword arguments passed to plot_single function.
     :returns: plotly.graph_objects.Figure instance.
     """
-    if params is None:
-        params = df.columns
 
     fig = go.Figure()
+    add_multilayer_plot(fig, df, plot_single, params, **kwargs)
 
-    def add_trace(fig, data, visible=True):
-        fig.add_traces(plot_single(data, visible=visible, **kwargs))
+    return fig
 
-    param_len = len(params)
-    bl = []
-    for nr, param in enumerate(params):
-        if nr == 0:
-            add_trace(fig, df[param])
-            trace_len = len(fig.data)
-        else:
-            add_trace(fig, df[param], visible=False)
-        is_visible = param_len * trace_len * [False]
-        for i in range(trace_len):
-            is_visible[nr * trace_len + i] = True
-        bl.append(dict(args=[{"visible": is_visible}], label=param, method="update"))
-    fig.update_layout(
+
+def multilayer_image_plot(df, yaxis, cb_title=None):
+    """
+    Make multilayer plot to show images using bp.multilayer_plot.
+    :param df: Pandas DataFrame.
+    :param yaxis: Index level to use as y axis.
+    :param cb_title: Color bar title. [Default: None]
+    :returns: Plotly Figure.
+    """
+
+    def plot_single(data, visible, cb_title):
+        plot_data = data.unstack(yaxis)
+        plot_data = plot_data.dropna(axis=0, how="all")
+        plot_data = plot_data.dropna(axis=1, how="all")
+        trace = go.Heatmap(
+            x=plot_data.index.values,
+            y=plot_data.columns.values,
+            z=plot_data,
+            colorscale="Inferno",
+            colorbar=dict(title=cb_title),
+            transpose=True,
+            visible=visible,
+        )
+        return [trace]
+
+    multilayer_fig = multilayer_plot(df, plot_single, cb_title=cb_title)
+    multilayer_fig.update_layout(
         updatemenus=[
             dict(
-                buttons=bl,
-                direction="down",
-                pad={"r": 10, "t": 10},
-                showactive=True,
-                x=0.1,
-                xanchor="left",
+                x=1,
+                xanchor="right",
                 y=1.1,
                 yanchor="top",
             ),
-        ]
+        ],
     )
-    return fig
+    return multilayer_fig
 
 
 # set the template
