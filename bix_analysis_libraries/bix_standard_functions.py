@@ -6,6 +6,7 @@ import numpy as np
 from scipy.integrate import simpson
 from scipy.signal import savgol_filter
 from scipy.interpolate import interp1d
+import json
 
 
 def change_extension(path, new_extension):
@@ -17,6 +18,16 @@ def change_extension(path, new_extension):
     """
     base, _ = os.path.splitext(path)
     return f"{base}.{new_extension}"
+
+
+def json_to_dict(json_path):
+    if os.path.isfile(json_path):
+        with open(json_path, "r") as j:
+            j_str = j.read()
+            dict = json.loads(j_str)
+            return dict
+    else:
+        raise FileNotFoundError(f"File {json_path} not found.")
 
 
 def metadata_from_file_name(path, pattern, as_list=False):
