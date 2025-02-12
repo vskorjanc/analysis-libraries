@@ -96,6 +96,8 @@ def import_raw_data(
     dfs = []
     for file in files:
         df = import_file(file, **i_file_kwargs)
+        if df.empty:
+            continue
         if has_date:
             df = bsf.add_level(df, date, "date", axis=1)
         df = append_substrate_meta(file, df, **kwargs)
