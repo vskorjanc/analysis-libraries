@@ -110,7 +110,6 @@ def flatten_column_index(df, linker="_"):
     :returns: Pandas DataFrame with a single column index.
     """
     df = df.copy()
-    columns = df.columns.values
     if df.columns.nlevels > 1:
         df.columns = [linker.join(col) for col in df.columns.values]
     return df
