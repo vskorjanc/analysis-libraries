@@ -27,6 +27,7 @@ def export_plotly(
     add_svg=False,
     add_png=False,
     dimensions=[600, 500],
+    update_layout_kwargs={},
     **kwargs,
 ):
     if rename and os.path.isfile(fig_props_path):
@@ -35,7 +36,7 @@ def export_plotly(
     export_html(fig=fig, path=path, **kwargs)
     if not (add_png or add_png):
         return
-    fig.update_layout(width=dimensions[0], height=dimensions[1])
+    fig.update_layout(width=dimensions[0], height=dimensions[1], **update_layout_kwargs)
     if add_svg:
         path = bsf.change_extension(path, "svg")
         fig.write_image(path)
@@ -221,8 +222,6 @@ def heatmap_3D_plot(df, xaxis="x", params=None):
         if len(params) == 1:
             add_trace(fig, df)
         elif nr == 0:
-            print(f"param: {param}")
-            print(df[param])
             add_trace(fig, df[param])
         else:
             add_trace(fig, df[param], visible=False)
