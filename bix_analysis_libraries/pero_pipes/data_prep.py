@@ -7,7 +7,7 @@ from .. import bix_standard_functions as bsf
 from .. import thot as bt
 
 
-def get_substrate_name(path, pattern=r"(.*?)_?([a-f]?)\..*"):
+def get_substrate_name(path, pattern=r"([^_]*?)(?:_([a-f]))?\..*"):
     """
     Looks for substrate and pixel name. Splits the string around an underscore, if there is an underscore,
     the part after it is considered pixel name.
@@ -16,11 +16,11 @@ def get_substrate_name(path, pattern=r"(.*?)_?([a-f]?)\..*"):
     :returns: List with substrate name or substrate and pixel name.
     """
     file_name = os.path.basename(path)
-    match = re.search(pattern, file_name).groups()
+    match = re.match(pattern, file_name).groups()
     if len(match) > 2 or len(match) == 0:
         raise ValueError(f"Wrong file name: {file_name}")
     if len(match) == 2:
-        if match[1] == "":
+        if match[1] == None:
             match = [match[0]]
     return match
 
