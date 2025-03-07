@@ -7,14 +7,19 @@ import os.path
 
 def update_fig(fig, fig_props):
     def update_trace(t):
-        name = t.name
-        if "_" in name:
-            name = name.split("_")[0]
-        t.update(
-            name=fig_props.loc[name, "group"],
-            line_color=fig_props.loc[name, "color"],
-            legendrank=fig_props.loc[name, "legendrank"] + 1,
-        )
+        substrate_name = t.name
+        try:
+            if "_" in substrate_name:
+                substrate_name = substrate_name.split("_")[0]
+            group_name = fig_props.loc[substrate_name, "group"]
+            t.update(
+                name=group_name,
+                line_color=fig_props.loc[substrate_name, "color"],
+                legendrank=fig_props.loc[substrate_name, "legendrank"] + 1,
+            )
+
+        except KeyError:
+            return
 
     fig.for_each_trace(update_trace)
 
